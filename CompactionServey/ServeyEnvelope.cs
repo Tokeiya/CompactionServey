@@ -32,13 +32,13 @@ namespace CompactionServey
 		    Age = ++CurrentAge;
 		    Counter = GcCounter.Create();
 
-		    fixed (int* ptr = &_fixedPoint)
+		    fixed (int* ptr = &FixedPoint)
 		    {
 			    InitialAddress = ((UIntPtr) ptr).ToUInt64();
 		    }
 	    }
 
-	    private int _fixedPoint;
+	    public int FixedPoint;
 
 		public long Age { get; }
 	    public GcCounter Counter { get; }
@@ -47,7 +47,7 @@ namespace CompactionServey
 	    public unsafe bool Check()
 	    {
 		    ulong current;
-		    fixed (int* ptr = &_fixedPoint)
+		    fixed (int* ptr = &FixedPoint)
 		    {
 			    current = ((UIntPtr) ptr).ToUInt64();
 		    }
