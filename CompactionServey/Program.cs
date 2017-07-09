@@ -13,7 +13,7 @@ namespace CompactionServey
 
 	        for (int i = 0; i < size; i++)
 	        {
-		        array[i]=ServeyEnvelope.Create();
+		        array[i]=new ServeyEnvelope();
 	        }
 
 	        while (true)
@@ -26,8 +26,8 @@ namespace CompactionServey
 		        }
 		        for (var i = 0; i < size; i++)
 		        {
-			        ServeyEnvelope.Check(array[i]);
-			        array[i] = ServeyEnvelope.Create();
+			        array[i].Check();
+			        array[i] = new ServeyEnvelope();
 		        }
 	        }
 

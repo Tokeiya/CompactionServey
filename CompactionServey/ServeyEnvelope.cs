@@ -7,13 +7,6 @@ namespace CompactionServey
     {
 		public static int CurrentAge { get; private set; }
 
-	    public static unsafe ServeyEnvelope Create()
-	    {
-		    var ret=new ServeyEnvelope();
-		    ret.InitialAddress = ((UIntPtr) Unsafe.AsPointer(ref ret)).ToUInt64();
-
-			return ret;
-	    }
 
 	    public static unsafe void Check(ServeyEnvelope target)
 	    {
@@ -34,16 +27,46 @@ namespace CompactionServey
 		}
 
 
-	    public ServeyEnvelope()
+	    public unsafe ServeyEnvelope()
 	    {
 		    Age = ++CurrentAge;
 		    Counter = GcCounter.Create();
+
+		    fixed (int* ptr = &_fixedPoint)
+		    {
+			    InitialAddress = ((UIntPtr) ptr).ToUInt64();
+		    }
 	    }
+
+	    private int _fixedPoint;
 
 		public long Age { get; }
 	    public GcCounter Counter { get; }
-		public ulong InitialAddress { get; private set; }
+		public ulong InitialAddress { get; }
 
+	    public unsafe bool Check()
+	    {
+		    ulong current;
+		    fixed (int* ptr = &_fixedPoint)
+		    {
+			    current = ((UIntPtr) ptr).ToUInt64();
+		    }
+
+		    if (current != InitialAddress)
+		    {
+			    Console.WriteLine("Detect moving!");
+			    Console.WriteLine($"InitialAddr:0x{InitialAddress:x16}");
+			    Console.WriteLine($"CurrentAddr:0x{current:x16}");
+			    Console.WriteLine(GcCounter.Create().GetOffset(Counter));
+			    Console.WriteLine($"AgeOffset:{CurrentAge-Age}");
+
+				//Console.WriteLine("Press enter to continue.");
+			 //   Console.ReadLine();
+
+			    return false;
+		    }
+		    return true;
+	    }
 
     }
 }
